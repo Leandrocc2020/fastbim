@@ -1,11 +1,337 @@
+
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/png">
+    <title>FastBIM</title>
+    <!-- Fonts -->
+    <link href="assets/css/typography.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link rel="preload" as="style" href="assets/css/bim.css" />
+    <link rel="stylesheet" href="assets/css/bim.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <!-- Styles -->
+    <link href="assets/css/views/BIM/index.css" rel="stylesheet" />
     
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Crypto -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
+    <!-- DatatableJs -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <!-- Buttons extension CSS-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+
+    <!-- Buttons extension JS -->
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+
+    <!-- JSZip (necessário para a funcionalidade de exportação Excel) -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <!-- Botões de exportação para HTML5 (incluindo Excel) -->
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+
+    <!-- PDF Make (opcional, para exportar para PDF) -->
+    
+
+    <!-- Resize -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Drag and Drop  -->
+    <link rel="stylesheet" href="https://unpkg.com/dragula/dist/dragula.min.css">
+    <script src="https://unpkg.com/dragula/dist/dragula.min.js"></script>
+
+    <!-- FontAwesome icons  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Select 2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <!-- Biblioteca Quill - Editor html -->
+    
+
+    <!-- Biblioteca Date Range Picker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Dropzone.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+
+    <script>
+        var _mainModel = null;
+        var _listAllModel = null;
+    </script>
+
+</head>
+<body class="antialiased bg-zinc-100" allow="fullscreen">
+
+
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <div id="modalFiltros"></div>
+        <div id="modalFederarArquivos"></div>
+        <div id="modalSalvarconfiguracaoFiltros"></div>
+        <div id="modalSalvarVisaoCompartilhada"></div>
+        <div id="modalCompartilharLinkVisaoCompartilhada"></div>
+        <div id="modalConfirmacaoExclusaoVista"></div>
+        <div id="modalCopiarVisaoCompartilhada"></div>
+        <div id="modalSobre"></div>
+        <div id="btnModuloTarefas" class="hasToHideTasks" onclick="_mainModel.HandleAtivarModuloTarefasNoModelo3d(this)" data-toggle="tooltip" data-placement="top" title="Esconder tarefas Ctrl + E">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2.66642 6.66668C2.66642 6.00001 2.78874 5.3619 3.01217 4.77359L2.00195 3.76136L2.9457 2.81949L13.2664 13.1608L12.3227 14.1027L10.4504 12.2267C9.8686 12.9471 9.32218 13.5598 8.95468 13.959C8.43788 14.5203 7.56164 14.5203 7.04483 13.959C6.44626 13.3089 5.37301 12.0922 4.44531 10.7662C3.98165 10.1035 3.5445 9.39958 3.22097 8.71511C2.90281 8.042 2.66642 7.32995 2.66642 6.66668Z" fill="#6F6F6F" />
+                <path d="M4.58286 2.57148L12.0379 10.0414C12.3163 9.60202 12.5708 9.15456 12.7785 8.71511C13.0967 8.042 13.3331 7.32995 13.3331 6.66668C13.3331 3.72116 10.9453 1.33334 7.99976 1.33334C6.69969 1.33334 5.50827 1.79851 4.58286 2.57148Z" fill="#6F6F6F" />
+            </svg>
+            <div id="feedback" class="hidden">Tarefas exibidas</div>
+        </div>
+        <div id="btnSobre" class="" onclick="_mainModel.HandleModalSobre(this)" data-toggle="tooltip" data-placement="top" title="Sobre">
+            <i class="fas fa-question"></i>
+        </div>
+        <div id="filtrosDatatableArea" style="display: block;">
+            <div id="loader">
+                <div class="spinner"></div>
+            </div>
+            <div style="display: flex; flex-direction: row; align-items: center; width: 100%; padding: 16px 16px 16px 16px; border-bottom: 1px solid #f3f3f3;">
+                <div style="display: flex;width: 50%;">
+                    <h4 style=" color: #353535; font-size: 14px; font-style: normal; font-weight: 700; line-height: 19.6px;">Filtro de propriedades</h4>
+                </div>
+                <div style="display: flex;justify-content: right;align-items: center;font-size: 26px;font-weight: 600;width: 50%;">
+                    <span id="minimizarDatatable" onclick="return _mainModel.MinimizarDatatable(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                  d="M8.00021 11.6095L14.4716 5.13807L13.5288 4.19526L8.00021 9.72386L2.47162 4.19526L1.52881 5.13807L8.00021 11.6095Z"
+                                  fill="#A7A7A7">
+                            </path>
+                        </svg>
+                    </span>
+                    <span id="fecharDatatable" onclick="return _mainModel.HideDataTable()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                  d="M7.99996 8.94281L11.2998 12.2426L12.2426 11.2998L8.94277 8L12.2426 4.70017L11.2998 3.75736L7.99996 7.05719L4.70013 3.75736L3.75732 4.70017L7.05716 8L3.75732 11.2998L4.70013 12.2426L7.99996 8.94281Z"
+                                  fill="#A7A7A7">
+
+                            </path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div id="filtrosDatatable">
+                <table id="tabela_filtros" class="display" style="width:100%">
+                    <thead></thead>
+                    <tbody style="position: relative;"></tbody>
+                    <tfoot class="pesquisaDinamicaArea"></tfoot>
+                    <tfoot class="totaisArea"></tfoot>
+                </table>
+            </div>
+        </div>
+        <div id="datatableVisaoCompartilhadaArea" style="display: none;">
+            <div id="loaderVisaoCompartilhada">
+                <div class="spinner"></div>
+            </div>
+            <div style="display: flex; flex-direction: row; align-items: center; width: 100%; padding: 16px 16px 16px 16px; border-bottom: 1px solid #f3f3f3;">
+                <div style="display: flex;width: 50%;">
+                    <h4 style=" color: #353535; font-size: 14px; font-style: normal; font-weight: 700; line-height: 19.6px;">Visão compartilhada</h4>
+                </div>
+                <div style="display: flex;justify-content: right;align-items: center;font-size: 26px;font-weight: 600;width: 50%;">
+                    <span id="fecharDatatableVisaoCompartilhada" onclick="return _mainModel.HideDataTableVisaoCompartilhada(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                  d="M7.99996 8.94281L11.2998 12.2426L12.2426 11.2998L8.94277 8L12.2426 4.70017L11.2998 3.75736L7.99996 7.05719L4.70013 3.75736L3.75732 4.70017L7.05716 8L3.75732 11.2998L4.70013 12.2426L7.99996 8.94281Z"
+                                  fill="#A7A7A7">
+                            </path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div id="datatableVisaoCompartilhada">
+                <div class="clearFix"></div>
+                <div class="row" id="dttable-description">
+                    <div class="col-sm-12">
+                        <span>
+                            Você está visualizando: <strong>-</strong>
+                        </span>
+                    </div>
+                </div>
+                <table id="tabela_visao_compartilhada" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Nome do objeto</th>
+                        </tr>
+                    </thead>
+                    <tbody style="position: relative;"></tbody>
+                    <tfoot class=""></tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="bim-container" x-data="data" x-init="$watch('activeTask', value => fetchComments(value))">
+            <div id="bim-viewer" class="bim-viewer">
+                <canvas id="myCanvas"></canvas>
+                <canvas id="myNavCubeCanvas"></canvas>
+                <canvas class="hidden" id="mySectionPlanesOverviewCanvas"></canvas>
+                <div class="hidden">
+                    <div class="absolute h-28 top-3 left-3 w-96 backdrop-blur-sm rounded-s-xl z-30"></div>
+                    <ul class="flex gap-2 z-40 px-3 top-20 absolute w-96 left-3">
+                        <li>
+                            <button type="button" data-hierarchy="containment" data-toggle="treeview" aria-selected="true" class="action-button text-sm">
+                                Modelos
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" data-hierarchy="types" data-toggle="treeview" aria-selected="true" class="action-button text-sm">
+                                Categorias
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" data-hierarchy="storeys" data-toggle="treeview" aria-selected="true" class="action-button active text-sm">
+                                Pavimentos
+                            </button>
+                        </li>
+                    </ul>
+                    <div id="treeViewer" class="z-10"></div>
+                </div>
+
+                <div class="hidden">
+                    <div id="treeViewerVisaoCompartilhada" class="z-10">
+                        <div id="loaderVisaoCompartilhada">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="detailsViewer" class="hidden"></div>
+                <div class="flex gap-2 absolute left-6 top-6 z-50">
+                    <button id="tree_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Árvore de elementos">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.6666 5.08332H2.33325V3.91666H11.6666V5.08332ZM11.6666 7.41666H2.33325V6.24999H11.6666V7.41666ZM11.6666 9.74999H2.33325V8.58332H11.6666V9.74999ZM9.33325 12.0833H2.33325V10.9167H9.33325V12.0833Z" fill="#161616" />
+                        </svg>
+                    </button>
+
+                    
+                    <button id="visao_compartilhada_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Visão compartilhada">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.41252 2.46269C8.55155 1.32366 10.3983 1.32366 11.5373 2.46269C12.6763 3.60172 12.6763 5.44845 11.5373 6.58748L9.88739 8.2374L9.06244 7.41244L10.7124 5.76253C11.3958 5.07911 11.3958 3.97107 10.7124 3.28765C10.0289 2.60423 8.9209 2.60423 8.23748 3.28765L6.58756 4.93757L5.7626 4.11261L7.41252 2.46269ZM4.52517 8.64988L8.64996 4.52509L9.47491 5.35005L5.35013 9.47484L4.52517 8.64988ZM2.46277 7.41244L4.11269 5.76253L4.93765 6.58748L3.28773 8.2374C2.60431 8.92082 2.60431 10.0289 3.28773 10.7123C3.97115 11.3957 5.07919 11.3957 5.7626 10.7123L7.41252 9.06236L8.23748 9.88731L6.58756 11.5372C5.44853 12.6763 3.6018 12.6763 2.46277 11.5372C1.32374 10.3982 1.32374 8.55147 2.46277 7.41244Z" fill="#161616" />
+                        </svg>
+                    </button>
+
+                    <button id="ruler_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Régua">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
+                            <g clip-path="url(#clip0_1580_3127)">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.91675 1.34171L13.6584 5.08333L4.08342 14.6583L0.341797 10.9167L9.91675 1.34171ZM9.91675 2.99162L1.99171 10.9167L4.08342 13.0084L4.50846 12.5833L3.25428 11.3291L4.07923 10.5042L5.33342 11.7584L5.75846 11.3333L5.12928 10.7041L5.95423 9.87918L6.58342 10.5084L7.00846 10.0833L5.75428 8.82914L6.57923 8.00418L7.83342 9.25837L8.25846 8.83333L7.62928 8.20414L8.45423 7.37918L9.08342 8.00837L9.50846 7.58333L8.25427 6.32914L9.07923 5.50418L10.3334 6.75837L10.7585 6.33333L10.1293 5.70414L10.9542 4.87918L11.5834 5.50837L12.0085 5.08333L9.91675 2.99162Z" fill="#161616" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_1580_3127">
+                                    <rect width="14" height="14" fill="white" transform="translate(0 1)" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </button>
+                    <button id="panel_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Customizar perspectiva">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1.75 3.91668V12.0833C1.75 12.7277 2.27233 13.25 2.91667 13.25H5.25V12.0833H2.91667L2.91667 3.91668H5.25V2.75001H2.91667C2.27233 2.75001 1.75 3.27234 1.75 3.91668Z" fill="#161616" />
+                            <path d="M8.75 2.75001V3.91668H9.91667V2.75001H8.75Z" fill="#161616" />
+                            <path d="M11.0833 2.75001V3.91668H12.25C12.25 3.27234 11.7277 2.75001 11.0833 2.75001Z" fill="#161616" />
+                            <path d="M12.25 5.08334H11.0833V6.25001H12.25V5.08334Z" fill="#161616" />
+                            <path d="M12.25 7.41668H11.0833V8.58334H12.25V7.41668Z" fill="#161616" />
+                            <path d="M12.25 9.75001H11.0833V10.9167H12.25V9.75001Z" fill="#161616" />
+                            <path d="M12.25 12.0833H11.0833V13.25C11.7277 13.25 12.25 12.7277 12.25 12.0833Z" fill="#161616" />
+                            <path d="M9.91667 13.25V12.0833H8.75V13.25H9.91667Z" fill="#161616" />
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.41667 14.4167V1.58334H7.58333V14.4167H6.41667Z" fill="#161616" />
+                        </svg>
+
+                    </button>
+                    <button id="cube_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Cubo de perspectiva">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.91667 8.58333V7.41667H8.75V8.58333H9.91667Z" fill="#161616" />
+                            <path d="M7.58333 8.58333V7.41667H6.41667V8.58333H7.58333Z" fill="#161616" />
+                            <path d="M6.41667 9.75V10.9167H7.58333V9.75H6.41667Z" fill="#161616" />
+                            <path d="M5.25 8.58333V7.41667H4.08333V8.58333H5.25Z" fill="#161616" />
+                            <path d="M6.41667 6.25H7.58333V5.08333H6.41667V6.25Z" fill="#161616" />
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.75 2.75V13.25H12.25V2.75H1.75ZM11.0833 3.91667H2.91667V12.0833H11.0833V3.91667Z" fill="#161616" />
+                        </svg>
+
+                    </button>
+                    <button id="perspective_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Centralizar">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5649 2.42064C11.6736 2.57958 11.6969 2.78194 11.6271 2.96142L11.3121 3.77145C10.2544 6.49126 10.2544 9.50872 11.3121 12.2285L11.6271 13.0386C11.6969 13.218 11.6736 13.4204 11.5649 13.5793C11.4561 13.7383 11.276 13.8333 11.0834 13.8333L2.91674 13.8333C2.72417 13.8333 2.54401 13.7383 2.43528 13.5793C2.32656 13.4204 2.30328 13.218 2.37308 13.0386L2.68809 12.2285C3.74579 9.50872 3.74579 6.49126 2.68809 3.77145L2.37308 2.96142C2.30328 2.78194 2.32656 2.57958 2.43528 2.42064C2.54401 2.2617 2.72417 2.16666 2.91675 2.16666L11.0834 2.16666C11.276 2.16666 11.4561 2.2617 11.5649 2.42064ZM10.2307 12.6667L10.2247 12.6514C9.06125 9.65959 9.06125 6.34039 10.2247 3.3486L10.2307 3.33332L3.76949 3.33332L3.77543 3.3486C4.9389 6.34039 4.9389 9.65959 3.77543 12.6514L3.76949 12.6667L10.2307 12.6667Z" fill="#161616" />
+                        </svg>
+                    </button>
+                    <button id="home_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Visão inicial">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5001 7.31657V12.6667H8.75008V8.58332H5.25008V12.6667H3.50008V7.31657L7.00008 3.81657L10.5001 7.31657ZM7.00008 2.16666L12.8334 7.99999H11.6667V13.8333H7.58341V9.74999H6.41675V13.8333H2.33341V7.99999H1.16675L7.00008 2.16666Z" fill="#161616" />
+                        </svg>
+                    </button>
+                    <button id="details_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Propriedades do elemento">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_1580_2986)">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M1.74992 2.75001V13.25H12.2499V2.75001H1.74992ZM1.16659 1.58334C0.844419 1.58334 0.583252 1.84451 0.583252 2.16668V13.8333C0.583252 14.1555 0.844419 14.4167 1.16659 14.4167H12.8333C13.1554 14.4167 13.4166 14.1555 13.4166 13.8333V2.16668C13.4166 1.84451 13.1554 1.58334 12.8333 1.58334H1.16659Z" fill="#161616" />
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.08325 6.25001H2.91659V5.08334H4.08325V6.25001ZM11.0833 6.25001H5.24992V5.08334H11.0833V6.25001ZM4.08325 8.58334H2.91659V7.41668H4.08325V8.58334ZM11.0833 8.58334H5.24992V7.41668H11.0833V8.58334ZM4.08325 10.9167H2.91659V9.75001H4.08325V10.9167ZM11.0833 10.9167H5.24992V9.75001H11.0833V10.9167Z" fill="#161616" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_1580_2986">
+                                    <rect width="14" height="14" fill="white" transform="translate(0 1)" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </button>
+                    <button id="filter_button" class="action-button" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Filtro de propriedade">
+                        <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5217 3.53176C11.411 3.40564 11.2513 3.33334 11.0834 3.33334H2.62567C2.45783 3.33334 2.29812 3.40564 2.18736 3.53176C2.07661 3.65787 2.02555 3.82558 2.04722 3.99202C2.15972 4.85568 2.57972 5.65763 3.23845 6.24314C3.23846 6.24314 3.23844 6.24313 3.23845 6.24314L4.96363 7.77666C5.30634 8.08132 5.50305 8.51937 5.50305 8.97779V11.0592C5.50305 11.2542 5.60053 11.4363 5.76282 11.5445L7.29913 12.5687C7.47813 12.688 7.70828 12.6992 7.89795 12.5977C8.08762 12.4961 8.20603 12.2985 8.20603 12.0833V8.97787C8.20603 8.51937 8.40274 8.08134 8.74542 7.77669C8.74543 7.77668 8.74541 7.7767 8.74542 7.77669L10.4706 6.24322C11.1292 5.65769 11.5494 4.85573 11.6619 3.99202C11.6835 3.82558 11.6325 3.65787 11.5217 3.53176ZM10.3241 4.50001C10.1823 4.82951 9.96912 5.12798 9.69554 5.37123C9.69556 5.37122 9.69553 5.37125 9.69554 5.37123L7.97034 6.9047C7.37865 7.43071 7.03936 8.18607 7.03936 8.97787V10.9934L6.66972 10.747V8.97779C6.66972 8.18606 6.33046 7.43073 5.73877 6.90473L4.01355 5.37117C3.73995 5.12798 3.52678 4.82952 3.385 4.50001H10.3241Z" fill="#161616" />
+                        </svg>
+                    </button>
+                    <button id="fullscreen_button" class="action-button" alt="Full screen" data-tooltip="bottom" role="tooltip" aria-label="Full screen">
+                        <i class="mdi mdi-fullscreen"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const models = JSON.parse('[{"id":999,"planta_id":99966,"name":"NOME_DA_OBRA","type":"EXEMPLO CASA","url":"../assets/models/sample.xkt","DisciplinaNomeWithSigla":"NOME_DISCIPLINA","IdDisciplina":999}]');
+            const _idObra = 1310;
+            const _idUsuario = 457;
+            const _tokenValid = false;
+            const _redirectURL = ``;
+            const _hasToDisableFederarButton = `false`;
+            const _totalDocs = `1`;
+            const _modalFiltrosHtml = `
+                <select id="selectConfiguracoesFiltrosSalvos" class="form-control">
+                    <option value="" selected>Personalizado</option>
+                    <optgroup label="Criados por mim">
+                    </optgroup>
+                    <optgroup label="Compartilhados">
+                    </optgroup>
+                </select>
+            `;
+            const _chaveCompartilhamentoNaoEncontrada = false;
+            const _trazerVistaSelecionada = false;
+            const _idVistaSelecionadaPadrao = 0;
+            const _userActions = JSON.parse('{"CanCreateTasks":true,"CanDeleteAnytask":true,"CanDeleteSendedByMeTask":true,"CanUpdateAnyTask":true,"CanUpdateSendedByMeTask":true,"CanViewTasks":true,"CanCommentTasks":true,"CanDeleteTasksComment":true,"CanChangeTaskStatus":true,"CanCompleteTasks":true,"CanCompleteSendedByMeTasks":true}');
+        </script>
+        <script src="assets/js/xeokit-custom.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script type="module">
+                import("./assets/js/xeokit-sdk.min.js").then(bimSdkModule => {
+                $(document).ready(function () {
+                    _mainModel = new MainModel(models, bimSdkModule);
+                    _mainModel.InitializeBimViewer();
+                    _mainModel.EnableBootstrapTooltip();
+                    _mainModel.EnableBootstrapTooltipForClass('#btnModuloTarefas');
+                    _mainModel.EnableBootstrapTooltipForClass('#btnSobre');
+                    _mainModel.EnableCtrlEEvent();
+                });
+            });
+        </script>
 </body>
 </html>
